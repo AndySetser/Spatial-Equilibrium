@@ -315,6 +315,7 @@ let PLACES_CACHE = null;
 let placesLoading = false;
 
 const DEFAULT_BEA_KEY = "7E3072BE-5695-42CA-8D48-88F17304F09D";
+const DEFAULT_CENSUS_KEY = "f195333e288cc093d516f8b1a709892d9ea548b7";
 let mode = "single";
 let geo = "county";
 let selected = { a: null, b1: null, b2: null };
@@ -324,7 +325,7 @@ async function ensurePlacesLoaded(){
   placesLoading = true;
   setStatus("Loading the nationwide city/town list (one-time, ~29,000 places)...");
   try{
-    const url = "https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:*";
+    const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:*&key=${DEFAULT_CENSUS_KEY}`;
     const res = await fetch(url);
     if(!res.ok) throw new Error("Census place list request failed");
     const data = await res.json();
@@ -451,9 +452,9 @@ async function fetchACS(item){
   let url;
   if(geo==="county"){
     const stateFips=item[0].slice(0,2), countyFips=item[0].slice(2);
-    url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,${vars}&for=county:${countyFips}&in=state:${stateFips}`;
+    url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,${vars}&for=county:${countyFips}&in=state:${stateFips}&key=${DEFAULT_CENSUS_KEY}`;
   } else {
-    url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,${vars}&for=place:${item[4]}&in=state:${item[3]}`;
+    url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,${vars}&for=place:${item[4]}&in=state:${item[3]}&key=${DEFAULT_CENSUS_KEY}`;
   }
   const res = await fetch(url);
   if(!res.ok) throw new Error("Census ACS request failed ("+res.status+")");
