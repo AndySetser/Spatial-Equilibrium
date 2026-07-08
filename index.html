@@ -323,17 +323,25 @@ let selected = { a: null, b1: null, b2: null };
 async function ensurePlacesLoaded(){
   if(PLACES_CACHE || placesLoading) return;
   placesLoading = true;
-  setStatus("Loading the nationwide city/town list (one-time, 51 small requests)...");
+  setStatus("Loading the nationwide city/town list (one-time, batched requests)...");
   try{
     const stateFipsList = Array.from(new Set(COUNTIES.map(c=>c[0].slice(0,2))));
-    const results = await Promise.allSettled(stateFipsList.map(async (sf)=>{
-      const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${sf}&key=${DEFAULT_CENSUS_KEY}`;
-      const res = await fetch(url);
-      if(!res.ok) throw new Error("state "+sf+" failed");
-      const text = await res.text();
-      if(!text || !text.trim()) throw new Error("state "+sf+" empty response");
-      return JSON.parse(text);
-    }));
+    const BATCH_SIZE = 8;
+    const results = [];
+    for(let i=0; i<stateFipsList.length; i+=BATCH_SIZE){
+      const batch = stateFipsList.slice(i, i+BATCH_SIZE);
+      setStatus(`Loading city/town list... (${Math.min(i+BATCH_SIZE, stateFipsList.length)}/${stateFipsList.length} states)`);
+      const batchResults = await Promise.allSettled(batch.map(async (sf)=>{
+        const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${sf}&key=${DEFAULT_CENSUS_KEY}`;
+        const res = await fetch(url);
+        if(!res.ok) throw new Error("state "+sf+" failed");
+        const text = await res.text();
+        if(!text || !text.trim()) throw new Error("state "+sf+" empty response");
+        return JSON.parse(text);
+      }));
+      results.push(...batchResults);
+      if(i+BATCH_SIZE < stateFipsList.length) await new Promise(r=>setTimeout(r, 400));
+    }
     let combined = [];
     let failedCount = 0;
     results.forEach(r=>{
@@ -470,15 +478,21 @@ async function fetchACS(item){
   } else {
     url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,${vars}&for=place:${item[4]}&in=state:${item[3]}&key=${DEFAULT_CENSUS_KEY}`;
   }
-  const res = await fetch(url);
-  if(!res.ok) throw new Error("Census ACS request failed ("+res.status+")");
-  const text = await res.text();
-  if(!text || !text.trim()) throw new Error("Census returned an empty response \u2014 try again shortly");
-  let data;
-  try{ data = JSON.parse(text); } catch(e){ throw new Error("Census returned an unreadable response \u2014 try again shortly"); }
-  const headers=data[0], row=data[1], obj={};
-  headers.forEach((h,i)=>obj[h]=row[i]);
-  return obj;
+  for(let attempt=1; attempt<=3; attempt++){
+    try{
+      const res = await fetch(url);
+      if(!res.ok) throw new Error("Census ACS request failed ("+res.status+")");
+      const text = await res.text();
+      if(!text || !text.trim()) throw new Error("empty response");
+      const data = JSON.parse(text);
+      const headers=data[0], row=data[1], obj={};
+      headers.forEach((h,i)=>obj[h]=row[i]);
+      return obj;
+    } catch(e){
+      if(attempt===3) throw new Error("Census didn't respond after a few tries \u2014 try again in a moment");
+      await new Promise(r=>setTimeout(r, 500*attempt));
+    }
+  }
 }
 
 async function fetchBEA(item,key){
