@@ -211,18 +211,29 @@
   footer.credit{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:0.68rem;color:var(--ink-soft);margin-top:44px;text-align:center;}
 
   @media (max-width:640px){
-    .wrap{padding:20px 12px 60px;}
-    header.masthead h1{font-size:1.55rem;}
+    .wrap{padding:18px 14px 50px;}
+    header.masthead h1{font-size:1.5rem;}
+    header.masthead .tagline{font-size:0.85rem;}
+    .tabrow{width:100%;}
+    .tabrow button{flex:1;padding:9px 8px;font-size:0.76rem;letter-spacing:0.5px;}
     .search-row{flex-direction:column;}
     .compare-vals{flex-direction:column;gap:2px;}
     .compare-vals .b{text-align:left;}
     .stat-grid{grid-template-columns:1fr 1fr;}
+    .stat-card{padding:10px 11px;}
+    .stat-card .val{font-size:1.15rem;word-break:break-word;}
     .go-row{flex-direction:column;align-items:stretch;}
-    .keyfield input{width:100%;margin-left:0;margin-top:4px;display:block;}
     button.go{width:100%;}
+    .place-title{font-size:1.15rem;}
+    .methodology .m-body{overflow-x:hidden;}
+    .methodology .m-body table{display:block;overflow-x:auto;white-space:nowrap;font-size:0.76rem;}
+    .methodology .m-body table td, .methodology .m-body table th{white-space:normal;min-width:110px;}
+    .chart-wrap{padding:14px 10px;}
+    .chart-wrap h3{font-size:0.74rem;}
   }
-  @media (max-width:400px){
+  @media (max-width:460px){
     .stat-grid{grid-template-columns:1fr;}
+    .stat-card .val{font-size:1.3rem;}
   }
 </style>
 </head>
@@ -231,7 +242,7 @@
 
   <header class="masthead">
     <h1>Spatial Equilibrium</h1>
-    <div class="tagline">Named for the idea in urban and regional economics that people sort across places until wages, rents, and amenities balance out. Look up any U.S. county, city, or town and see what the Census Bureau and BEA actually report about it &mdash; pulled live, with every figure's exact source, definition, and comparability limits attached.</div>
+    <div class="tagline">Named after the idea that people move between places until the trade-offs even out: higher pay somewhere gets eaten up by higher rent, a better view costs more, and so on. Type in any U.S. county, city, or town to see what the Census Bureau and BEA actually report about it, pulled live, with the source and definition attached to every number.</div>
   </header>
 
   <div class="controls">
@@ -268,7 +279,6 @@
 
     <div class="go-row">
       <button class="go" id="go-btn" disabled>Pull the data</button>
-      <div class="keyfield"></div>
     </div>
     <div class="status" id="status"></div>
   </div>
@@ -276,15 +286,15 @@
   <section class="report" id="report" style="display:none;"></section>
 
   <details class="methodology">
-    <summary>Methodology, definitions, and comparability limits &mdash; read this before drawing conclusions</summary>
+    <summary>Methodology, definitions, and comparability limits (read this before drawing conclusions)</summary>
     <div class="m-body">
-      <p class="principle">This tool does not rank, score, or recommend any place over another. It shows what federal data says, with each figure's source, exact definition, and known limitations attached, so you can judge what it means for your own decision.</p>
+      <p class="principle">This tool doesn't rank or score places. It shows what the data actually says, with the source and definition next to every number, so you can decide what matters to you.</p>
 
       <h4>Why the same word can mean different things</h4>
-      <p>"Income" from the Census Bureau and "income" from the Bureau of Economic Analysis are not the same measurement, even though both use that word. <strong>ACS median household income</strong> is pre-tax cash income reported by households in a survey &mdash; wages, self-employment income, some cash transfers &mdash; and excludes employer-paid benefits, non-cash government aid, and capital gains. <strong>BEA per-capita personal income</strong> is a broader national-accounts concept built from administrative and business records: it includes employer contributions to health insurance and pensions, imputed rent on owner-occupied housing, and the value of in-kind government transfers like Medicare. The two numbers are constructed from different source data and different definitions of "income" &mdash; treat them as two different lenses on the same place, never as directly interchangeable, and never subtract one from the other.</p>
+      <p>The Census Bureau and the Bureau of Economic Analysis both use the word "income," but they don't mean the same thing. <strong>ACS median household income</strong> comes from a survey. It's pre-tax cash: wages, self-employment income, and some cash payments like Social Security. It doesn't count employer-paid benefits, non-cash aid, or capital gains. <strong>BEA per-capita personal income</strong> is built differently, from business and administrative records. It's broader: it adds in things like employer-paid health insurance, the value of owning your home instead of renting it, and government benefits like Medicare. Same word, two different measurements. Treat them as two separate views of a place, not one number you can swap for the other.</p>
 
-      <h4>How the rent burden figure is built (and why it differs from a naive version)</h4>
-      <p>A common shortcut compares median rent against the income of <em>all</em> households &mdash; owners included &mdash; which mixes two different populations. This tool instead compares median gross rent against the median income of <em>renter households specifically</em> (Census Table B25119), so the burden estimate reflects what renters actually earn, not a blended figure inflated by higher-earning homeowners. It is still a simplified estimate built from two separate medians, not a household-by-household ratio &mdash; the Census Bureau's own housing-cost-burden tables (B25070/B25091) measure that directly but aren't broken out at every geography level this tool covers.</p>
+      <h4>How the rent burden number is built</h4>
+      <p>A quick way to check if rent is affordable is to compare it to everyone's income, owners included. But that mixes two different groups and makes rent look more affordable than it really is for renters. This tool compares rent only to what renters themselves earn (Census Table B25119), so the number reflects the people actually paying rent. It's still a simplified estimate built from two separate medians, not a household-by-household calculation. The Census Bureau does have tables that measure that directly (B25070 and B25091), but they aren't available at every geography level this tool covers.</p>
 
       <h4>Data dictionary</h4>
       <table>
@@ -292,22 +302,22 @@
         <tr><td>Population</td><td>ACS 5-yr, B01003</td><td>5-year rolling estimate, not a single-year count</td></tr>
         <tr><td>Median household income</td><td>ACS 5-yr, B19013</td><td>Pre-tax money income, all households, by household not by person</td></tr>
         <tr><td>Renter household income</td><td>ACS 5-yr, B25119</td><td>Same concept, restricted to renter-occupied households only</td></tr>
-        <tr><td>Poverty rate</td><td>ACS 5-yr, B17001 (derived)</td><td>Official Poverty Measure &mdash; a national income threshold by family size that does not adjust for local cost of living</td></tr>
-        <tr><td>Median home value</td><td>ACS 5-yr, B25077</td><td>Owner's own estimate of sale value, not an appraisal or actual transaction price &mdash; owners tend to estimate high</td></tr>
-        <tr><td>Median gross rent</td><td>ACS 5-yr, B25064</td><td>Contract rent plus utilities, among current renters &mdash; may run below true asking rent for a new tenant</td></tr>
+        <tr><td>Poverty rate</td><td>ACS 5-yr, B17001 (derived)</td><td>Official Poverty Measure: a national income threshold by family size that does not adjust for local cost of living</td></tr>
+        <tr><td>Median home value</td><td>ACS 5-yr, B25077</td><td>Owner's own estimate of sale value, not an appraisal or actual transaction price. Owners tend to estimate high</td></tr>
+        <tr><td>Median gross rent</td><td>ACS 5-yr, B25064</td><td>Contract rent plus utilities, among current renters. May run below true asking rent for a new tenant</td></tr>
         <tr><td>Rent burden (corrected)</td><td>Derived, this tool</td><td>Median rent &divide; renter household income, not blended with owner income</td></tr>
-        <tr><td>Home price-to-income</td><td>Derived, this tool</td><td>Median home value &divide; median household income &mdash; a standard affordability/market-entry measure. Reference bands (3x/5x) are a common rule of thumb, not an official standard</td></tr>
+        <tr><td>Home price-to-income</td><td>Derived, this tool</td><td>Median home value divided by median household income: a standard affordability and market-entry measure. Reference bands (3x/5x) are a common rule of thumb, not an official standard</td></tr>
         <tr><td>Housing vacancy rate</td><td>ACS 5-yr, B25002</td><td>Vacant units &divide; total units. Lower = tighter market, harder to enter regardless of price. Blends owner and renter markets, not rental-specific</td></tr>
         <tr><td>Natural amenity score</td><td>USDA ERS Natural Amenities Scale</td><td>Standardized composite of climate, topography, and water-area measures. Embedded statically (not live-fetched); excludes Alaska and Hawaii. County-level only</td></tr>
         <tr><td>Per-capita personal income</td><td>BEA Regional, CAINC1</td><td>Broader income concept (see above); county/state level only</td></tr>
       </table>
 
-      <h4>Statistical context: percentiles, z-scores, and the hedonic regression</h4>
-      <p>Where you see a percentile or standard-deviation figure, it's computed against a live national dataset of every U.S. county (or every place, in City/Town mode) pulled the same way, in the same batched fetch used to build the search list. The percentile is this place's rank among all of them; the z-score is how many standard deviations it sits from the national mean.</p>
-      <p>In County mode, the "home value vs. predicted" figure uses a <strong>hedonic regression</strong> &mdash; home value regressed on income, amenity business density, and the natural amenity score together &mdash; whenever all three are available for that county, so the predicted value and each coefficient reflect that variable's relationship to home price holding the other two constant. When amenity data is missing for a place, this tool falls back to a simpler income-only regression and says so explicitly rather than silently degrading precision. Either version is a small model: it leaves out land-use restrictions, school quality, crime, coastal proximity, and dozens of other real drivers of home prices, so the coefficients and residuals shown are rough national averages, not a causal formula for any one place. If the national dataset hasn't finished loading (a one-time background pull), these figures are simply omitted rather than estimated.</p>
+      <h4>Percentiles, standard deviations, and the regression</h4>
+      <p>Any percentile or standard-deviation figure comes from comparing this place against every U.S. county, or every place in City/Town mode, pulled the same way. Percentile means rank: 80th percentile means this place is higher than 80 percent of the others. Standard deviation just means how far from the average, in a consistent unit.</p>
+      <p>In County mode, the "home value vs. predicted" number comes from a <strong>hedonic regression</strong>: a statistical fit of home value against income and the natural amenity score together, run across every county with data for both. It shows what home values would be expected to look like at this county's income and amenity level, based on the national pattern, and how far the real number is from that. When the amenity score is missing (mostly Alaska and Hawaii, which aren't in the USDA dataset), the tool falls back to a simpler income-only version and says so. Either way, it's a small model. It leaves out zoning rules, school quality, crime, and plenty of other things that actually move home prices, so read the result as a rough national pattern, not a formula for any one place. If the national dataset is still loading in the background, this number is just left off rather than guessed.</p>
 
-      <h4>Known limits, stated plainly</h4>
-      <p>ACS 5-year estimates lag real time by roughly 2&ndash;7 years and carry wider margins of error in small places &mdash; a number for a town of 800 people is far less statistically reliable than the same figure for a city of 80,000, even though this tool displays them with equal visual weight. City/Town mode covers incorporated places and Census-designated places only; unincorporated communities without their own Census geography won't appear. Suppressed or unavailable figures are labeled "data not available," never estimated or guessed. BLS wage and industry detail, migration flows, climate risk, and broadband access are planned additions, not yet included.</p>
+      <h4>What this tool doesn't do well yet</h4>
+      <p>ACS 5-year estimates run 2 to 7 years behind real time, and small places have wider margins of error than large ones, even though this tool shows every number with the same visual weight. City/Town mode only covers incorporated places and Census-designated places. Small unincorporated communities won't show up. When a number is missing or suppressed for privacy, it says "data not available" instead of guessing. Wage and industry detail, migration patterns, climate risk, and broadband access aren't in here yet, but they're on the list.</p>
     </div>
   </details>
 
@@ -336,6 +346,11 @@ function parseStatsRow(row, idx){
   return {pop:popRaw, income:incomeRaw, povRate, homeVal:homeRaw, rent:rentRaw, priceToIncome, vacancyRate};
 }
 
+// SIMPLE LINEAR REGRESSION (ordinary least squares, one predictor)
+// Model: y = intercept + slope * x
+// Closed-form solution (no matrix algebra needed for a single predictor):
+//   slope     = sum((x_i - xbar)(y_i - ybar)) / sum((x_i - xbar)^2)
+//   intercept = ybar - slope * xbar
 function linreg(xs, ys){
   const n = xs.length;
   if(n<2) return {slope:0, intercept:ys[0]||0, n};
@@ -347,6 +362,12 @@ function linreg(xs, ys){
   return {slope, intercept: ybar - slope*xbar, n};
 }
 
+// GAUSSIAN ELIMINATION WITH PARTIAL PIVOTING
+// Solves the linear system A * x = b for x, used below to solve the OLS normal
+// equations (X'X) * beta = X'y for the coefficient vector beta. Partial pivoting
+// (swapping in the row with the largest pivot value at each step) keeps the
+// arithmetic numerically stable when the underlying variables are on very
+// different scales, which income and a small climate index certainly are.
 function solveLinearSystem(A, b){
   const n = b.length;
   const M = A.map((row,i)=>[...row, b[i]]);
@@ -366,13 +387,17 @@ function solveLinearSystem(A, b){
   return M.map(row=>row[n]);
 }
 
-// Multivariate OLS via normal equations: rows is an array of {y, x: [x1, x2, ...]}.
-// Returns {coef: [intercept, b1, b2, ...], n}. This is the hedonic regression --
-// home value regressed on income and amenity variables together, so each
-// coefficient is the marginal price of that variable holding the others constant.
+// MULTIVARIATE OLS REGRESSION (the hedonic model), via the normal equations
+// Model: y = b0 + b1*x1 + b2*x2 + ... (here: home value = b0 + b1*income + b2*natAmenScore)
+// The least-squares solution is beta = (X'X)^-1 * X'y, where X is the design matrix
+// (a column of 1s for the intercept, plus one column per predictor) and X' is its
+// transpose. Rather than compute a matrix inverse directly, this builds X'X and X'y
+// and solves (X'X)*beta = X'y with solveLinearSystem() above; same answer, fewer
+// floating-point operations, and no separate matrix-inversion routine to maintain.
+// rows: array of {y, x: [x1, x2, ...]}. Returns {coef: [intercept, b1, b2, ...], n}.
 function multiRegression(rows){
   const n = rows.length;
-  const p = rows[0].x.length + 1; // +1 for intercept
+  const p = rows[0].x.length + 1; // +1 for the intercept term
   if(n < p+2) return null;
   const X = rows.map(r => [1, ...r.x]);
   const y = rows.map(r => r.y);
@@ -425,6 +450,11 @@ function buildDistributions(parsed){
   return dist;
 }
 
+// PERCENTILE RANK
+// percentile(x) = (count of values <= x) / n * 100
+// Implemented as a binary search on a pre-sorted array (O(log n) per lookup) rather
+// than a linear scan, since this runs once per metric per place displayed and the
+// underlying arrays hold thousands of counties.
 function percentileRank(sortedArr, value){
   if(!sortedArr || sortedArr.length===0) return null;
   let lo=0, hi=sortedArr.length;
@@ -432,6 +462,11 @@ function percentileRank(sortedArr, value){
   return (lo/sortedArr.length)*100;
 }
 
+// Z-SCORE (standard score)
+// z = (x - mean) / standard_deviation
+// Population standard deviation is used (divide by n, not n-1), since the national
+// dataset here is treated as the full population of U.S. counties or places being
+// compared, not a sample drawn from a larger population.
 function statContext(dist, dim, value){
   if(!dist || !dist[dim] || value===null || value===undefined || dist[dim].n===0) return null;
   const d = dist[dim];
@@ -459,6 +494,7 @@ function hedonicResidual(dist, income, natAmenScore, homeVal){
 async function ensureStatsLoaded(level){
   if(STATS_CACHE[level] || statsLoading[level]) return;
   statsLoading[level] = true;
+  await ensureVintageDetected();
   try{
     const stateFipsList = Array.from(new Set(COUNTIES.map(c=>c[0].slice(0,2))));
     const BATCH_SIZE = 8;
@@ -468,7 +504,7 @@ async function ensureStatsLoaded(level){
       const batch = stateFipsList.slice(i, i+BATCH_SIZE);
       setStatus(`Loading national comparison dataset for statistical context... (${Math.min(i+BATCH_SIZE, stateFipsList.length)}/${stateFipsList.length} states)`);
       const batchResults = await Promise.allSettled(batch.map(async (sf)=>{
-        const acsUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME,${STATS_VARS}&for=${geoWord}:*&in=state:${sf}&key=${DEFAULT_CENSUS_KEY}`;
+        const acsUrl = `https://api.census.gov/data/${ACS_VINTAGE}/acs/acs5?get=NAME,${STATS_VARS}&for=${geoWord}:*&in=state:${sf}&key=${DEFAULT_CENSUS_KEY}`;
         const acsRes = await fetch(acsUrl);
         if(!acsRes.ok) throw new Error("state "+sf+" acs failed");
         const acsText = await acsRes.text();
@@ -504,6 +540,37 @@ async function ensureStatsLoaded(level){
 
 const DEFAULT_BEA_KEY = "7E3072BE-5695-42CA-8D48-88F17304F09D";
 const DEFAULT_CENSUS_KEY = "f195333e288cc093d516f8b1a709892d9ea548b7";
+
+// The Census Bureau releases a new ACS 5-year vintage annually, usually in December,
+// roughly 12 months after the reference period ends. Rather than hardcode a year that
+// goes stale, this tool detects the newest vintage that actually has data by testing
+// candidate years (starting from the current year and working backward) against a
+// single known county, and caches whichever year responds successfully. Every fetch
+// in the tool uses ACS_VINTAGE instead of a literal year, so this tool updates itself
+// automatically once Census publishes a new release; no code change needed.
+let ACS_VINTAGE = null;
+const ACS_VINTAGE_FLOOR = 2022; // the oldest vintage this tool has been tested against
+
+async function ensureVintageDetected(){
+  if(ACS_VINTAGE) return ACS_VINTAGE;
+  const currentYear = new Date().getFullYear();
+  for(let y = currentYear; y >= ACS_VINTAGE_FLOOR; y--){
+    try{
+      const testUrl = `https://api.census.gov/data/${y}/acs/acs5?get=NAME&for=county:013&in=state:08&key=${DEFAULT_CENSUS_KEY}`;
+      const res = await fetch(testUrl);
+      if(res.ok){
+        const text = await res.text();
+        if(text && text.trim().startsWith("[")){
+          ACS_VINTAGE = y;
+          return y;
+        }
+      }
+    } catch(e){ /* try the next year down */ }
+  }
+  ACS_VINTAGE = ACS_VINTAGE_FLOOR;
+  return ACS_VINTAGE_FLOOR;
+}
+
 let mode = "single";
 let geo = "county";
 let selected = { a: null, b1: null, b2: null };
@@ -511,6 +578,7 @@ let selected = { a: null, b1: null, b2: null };
 async function ensurePlacesLoaded(){
   if(PLACES_CACHE || placesLoading) return;
   placesLoading = true;
+  await ensureVintageDetected();
   setStatus("Loading the nationwide city/town list (one-time, batched requests)...");
   try{
     const stateFipsList = Array.from(new Set(COUNTIES.map(c=>c[0].slice(0,2))));
@@ -520,7 +588,7 @@ async function ensurePlacesLoaded(){
       const batch = stateFipsList.slice(i, i+BATCH_SIZE);
       setStatus(`Loading city/town list... (${Math.min(i+BATCH_SIZE, stateFipsList.length)}/${stateFipsList.length} states)`);
       const batchResults = await Promise.allSettled(batch.map(async (sf)=>{
-        const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${sf}&key=${DEFAULT_CENSUS_KEY}`;
+        const url = `https://api.census.gov/data/${ACS_VINTAGE}/acs/acs5?get=NAME&for=place:*&in=state:${sf}&key=${DEFAULT_CENSUS_KEY}`;
         const res = await fetch(url);
         if(!res.ok) throw new Error("state "+sf+" failed");
         const text = await res.text();
@@ -664,13 +732,14 @@ const SUPPRESSED=-666666666;
 function safe(v){ const n=parseInt(v,10); if(isNaN(n)||n===SUPPRESSED||n<0) return null; return n; }
 
 async function fetchACS(item){
+  await ensureVintageDetected();
   const vars = "B01003_001E,B19013_001E,B17001_001E,B17001_002E,B25077_001E,B25064_001E,B25119_003E,B25002_001E,B25002_003E";
   let url;
   if(geo==="county"){
     const stateFips=item[0].slice(0,2), countyFips=item[0].slice(2);
-    url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,${vars}&for=county:${countyFips}&in=state:${stateFips}&key=${DEFAULT_CENSUS_KEY}`;
+    url = `https://api.census.gov/data/${ACS_VINTAGE}/acs/acs5?get=NAME,${vars}&for=county:${countyFips}&in=state:${stateFips}&key=${DEFAULT_CENSUS_KEY}`;
   } else {
-    url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,${vars}&for=place:${item[4]}&in=state:${item[3]}&key=${DEFAULT_CENSUS_KEY}`;
+    url = `https://api.census.gov/data/${ACS_VINTAGE}/acs/acs5?get=NAME,${vars}&for=place:${item[4]}&in=state:${item[3]}&key=${DEFAULT_CENSUS_KEY}`;
   }
   for(let attempt=1; attempt<=3; attempt++){
     try{
@@ -697,9 +766,9 @@ async function fetchBEA(item,key){
     if(!res.ok) return {error:"BEA request failed"};
     const data = await res.json();
     const results = data && data.BEAAPI && data.BEAAPI.Results;
-    if(!results || results.Error) return {error:"BEA returned an error - check your key"};
+    if(!results || results.Error) return {error:"BEA returned an error, check your key"};
     return results.Data;
-  } catch(e){ return {error:"BEA call blocked (likely CORS) - try again"}; }
+  } catch(e){ return {error:"BEA call blocked (likely CORS), try again"}; }
 }
 
 function fmtMoney(n){ return n===null?null:"$"+n.toLocaleString(); }
@@ -730,12 +799,27 @@ function buildMetrics(acs,bea){
   const unitsTotal=safe(acs.B25002_001E), unitsVacant=safe(acs.B25002_003E);
 
   const pop=fmtNum(popRaw), income=fmtMoney(incomeRaw);
+
+  // POVERTY RATE = (population below poverty threshold) / (population for whom
+  // poverty status is determined) * 100. Table B17001: numerator is cell 002,
+  // denominator is cell 001 (the universe excludes some group-quarters residents).
   const povRate=(povU&&povU>0&&povC!==null)?((povC/povU)*100).toFixed(1)+"%":null;
   const homeVal=fmtMoney(homeRaw), rent=fmtMoney(rentRaw);
+
+  // RENT BURDEN (corrected) = (median gross rent * 12) / median RENTER household
+  // income * 100. Uses Table B25119's renter-specific income rather than B19013's
+  // all-household income, so the ratio compares rent against what renters actually
+  // earn instead of a figure inflated by higher-earning homeowners.
   let rentBurden=null;
   if(rentRaw && renterIncRaw){
     rentBurden = (((rentRaw*12)/renterIncRaw)*100).toFixed(1)+"%";
   }
+
+  // PRICE-TO-INCOME RATIO = median home value / median household income.
+  // The standard "years of income to buy in" affordability measure. Reference
+  // bands (<=3x affordable, 3-5x moderately unaffordable, >5x severely
+  // unaffordable) are a widely used rule of thumb, not an official government
+  // standard, and are labeled as such wherever they're shown.
   let priceToIncome=null, priceToIncomeRaw=null, priceToIncomeTier=null;
   if(homeRaw && incomeRaw){
     priceToIncomeRaw = homeRaw/incomeRaw;
@@ -744,6 +828,9 @@ function buildMetrics(acs,bea){
     else if(priceToIncomeRaw<=5) priceToIncomeTier="Moderately unaffordable by the common 3-5x range";
     else priceToIncomeTier="Severely unaffordable by the common >5x threshold";
   }
+
+  // VACANCY RATE = vacant housing units / total housing units * 100 (Table B25002).
+  // A lower rate signals a tighter, harder-to-enter market regardless of price.
   let vacancyRate=null, vacancyRateRaw=null;
   if(unitsTotal && unitsTotal>0 && unitsVacant!==null){
     vacancyRateRaw = (unitsVacant/unitsTotal)*100;
@@ -763,16 +850,16 @@ function buildMetrics(acs,bea){
 }
 
 const NOTES = {
-  pop: "Census ACS 5-Year Estimates, Table B01003. 5-year rolling estimate, vintage 2018-2022.",
-  income: "Census ACS 5-Year Estimates, Table B19013. Pre-tax money income, all households. Not directly comparable to BEA's per-capita income concept &mdash; see Methodology.",
+  pop: "Census ACS 5-Year Estimates, Table B01003. A 5-year rolling estimate, not a single-year count; see the vintage shown above for the exact 5-year window.",
+  income: "Census ACS 5-Year Estimates, Table B19013. Pre-tax money income, all households. Not directly comparable to BEA's per-capita income concept (see Methodology).",
   pov: "Derived from Census ACS 5-Year Estimates, Table B17001. Uses the Official Poverty Measure, which does not adjust for local cost of living.",
   home: "Census ACS 5-Year Estimates, Table B25077. Owner's self-reported estimate of value, not an appraisal or sale price.",
-  rent: "Census ACS 5-Year Estimates, Table B25064. Contract rent plus utilities, among current renters &mdash; may lag true market rent for a new tenant.",
+  rent: "Census ACS 5-Year Estimates, Table B25064. Contract rent plus utilities, among current renters. May lag true market rent for a new tenant.",
   burden: "Derived by this tool as (median gross rent &times; 12) &divide; median renter household income (Table B25119), corrected to compare renters against renter income rather than all households.",
-  price2inc: "Derived by this tool as median home value &divide; median household income &mdash; the standard 'years of income to buy in' affordability measure used across housing economics. The 3x/5x reference bands are a common rule of thumb, not an official government threshold, and don't account for interest rates, down payment size, or local financing conditions.",
+  price2inc: "Derived by this tool as median home value divided by median household income: the standard 'years of income to buy in' affordability measure used across housing economics. The 3x/5x reference bands are a common rule of thumb, not an official government threshold, and don't account for interest rates, down payment size, or local financing conditions.",
   vacancy: "Derived from Census ACS 5-Year Estimates, Table B25002 (occupancy status): vacant units &divide; total housing units. A lower rate signals a tighter market where housing is harder to find regardless of price; a higher rate signals more available supply. This is overall vacancy, not rental-specific, so it blends owner and renter markets.",
-  bea: "Bureau of Economic Analysis, Regional Economic Accounts, Table CAINC1, Line 3. A broader income concept than ACS &mdash; includes employer benefits, imputed rent, and in-kind transfers. County-level only.",
-  regression: "Computed by this tool: an ordinary least squares (OLS) fit of median home value on median household income, across every U.S. county or place with valid data in this same ACS vintage (simple bivariate regression, y = a + bx). The residual shown is the gap between the actual home value and what that line predicts at this place's income level. This is a simple two-variable model &mdash; it doesn't control for local land-use restrictions, amenities, climate, or coastal proximity, all of which independently affect home prices, so a large residual reflects everything the income variable alone doesn't explain, not a single cause.",
+  bea: "Bureau of Economic Analysis, Regional Economic Accounts, Table CAINC1, Line 3. A broader income concept than ACS: includes employer benefits, imputed rent, and in-kind transfers. County-level only.",
+  regression: "Computed by this tool: an ordinary least squares (OLS) fit of median home value on median household income, across every U.S. county or place with valid data in this same ACS vintage (simple bivariate regression, y = a + bx). The residual shown is the gap between the actual home value and what that line predicts at this place's income level. This is a simple two-variable model. It doesn't control for local land-use restrictions, amenities, climate, or coastal proximity, all of which independently affect home prices, so a large residual reflects everything the income variable alone doesn't explain, not a single cause.",
   natamen: "USDA Economic Research Service, Natural Amenities Scale (1999), the Bureau's own official published composite, combining six standardized measures: warm winter, winter sun, temperate summer, low summer humidity, topographic variation, and water area. Built from 1941-1970 climate normals plus topography and water-area measures that don't meaningfully change over time. This is the original USDA-published figure with no third-party recalculation. Source: ers.usda.gov/data-products/natural-amenities-scale. Alaska and Hawaii are excluded from the underlying USDA data. Embedded once in this tool rather than fetched live, since USDA does not offer a live API for this dataset. Running trails, ski resorts, and specific local businesses aren't included here; there's no clean federal dataset comparable in rigor to this one for those, so this tool doesn't attempt to fake that comparison. County-level only."
 };
 
@@ -813,7 +900,7 @@ function reliabilityNotice(acs1,acs2){
   const p1=safe(acs1.B01003_001E)||0, p2=safe(acs2.B01003_001E)||0;
   const small = Math.min(p1,p2);
   if(small>0 && small<5000){
-    return `One or both places have small populations, which means their ACS estimates carry wider margins of error than the numbers for larger places &mdash; treat small differences between them as noise, not signal.`;
+    return `One or both places have small populations, which means their ACS estimates carry wider margins of error than the numbers for larger places. Treat small differences between them as noise, not signal.`;
   }
   return null;
 }
@@ -839,7 +926,7 @@ async function runSingle(){
     let beaHtml="";
     if(geo==="county"){
       if(bea && bea.error) beaHtml=statCard("Per-capita personal income", `<span style="font-size:0.85rem">${bea.error}</span>`, "f-bea", NOTES.bea, null, true);
-      else if(m.perCapita) beaHtml=statCard("Per-capita personal income", m.perCapita, "f-bea", NOTES.bea, "Broader income concept than the household figure above &mdash; not directly comparable to it.", false);
+      else if(m.perCapita) beaHtml=statCard("Per-capita personal income", m.perCapita, "f-bea", NOTES.bea, "Broader income concept than the household figure above, not directly comparable to it.", false);
     }
 
     let regressionHtml="";
@@ -871,20 +958,20 @@ async function runSingle(){
       if(hedResid){
         const c = hedResid.coef;
         hedonicPanel = `<div class="chart-wrap" style="text-align:left;">
-          <h3 style="text-align:center;">What the national data says drives home prices (hedonic regression, n=${hedResid.n.toLocaleString()} counties)</h3>
+          <h3 style="text-align:center;">What drives home prices, nationally (based on ${hedResid.n.toLocaleString()} counties)</h3>
           <p style="font-size:0.85rem;color:var(--ink-soft);line-height:1.6;margin:0;">
-            Holding the other constant: each additional $1,000 in median household income is associated with
-            <strong>${c[1]>=0?'+':''}$${Math.round(c[1]*1000).toLocaleString()}</strong> in median home value.
-            Each 1-point increase in the natural amenity score (climate, topography, water) is associated with
-            <strong>${c[2]>=0?'+':''}$${Math.round(c[2]).toLocaleString()}</strong>.
-            These are correlational, not causal &mdash; a simple two-variable model leaves out land-use rules, school quality, crime, and dozens of other real drivers, so treat these as rough national averages, not a formula for any one place.
+            Across every county in this dataset, $1,000 more in income tends to come with
+            <strong>${c[1]>=0?'+':''}$${Math.round(c[1]*1000).toLocaleString()}</strong> more in home value.
+            One extra point on the natural amenity score (climate, terrain, water) tends to come with
+            <strong>${c[2]>=0?'+':''}$${Math.round(c[2]).toLocaleString()}</strong> more.
+            This shows a pattern, not a cause. A two-variable model skips zoning, schools, crime, and a lot else that actually moves home prices, so treat this as a rough national average, not a rule for any single place.
           </p>
         </div>`;
       }
     }
 
     report.innerHTML = `
-      <div class="place-title">${acs.NAME}<small>Live pull &middot; ${geo==="county"?"County":"City/town"} &middot; ACS 5-year vintage 2018&ndash;2022</small></div>
+      <div class="place-title">${acs.NAME}<small>Live pull &middot; ${geo==="county"?"County":"City/town"} &middot; ACS 5-year vintage ${ACS_VINTAGE-4}&ndash;${ACS_VINTAGE}</small></div>
       <div class="stat-grid">
         ${statCard("Population", m.pop||"Data not available", "f-pop", NOTES.pop, null, !m.pop)}
         ${statCard("Median household income", m.income||"Data not available", "f-inc", NOTES.income, ctx("income", m.raw.income, "All households, pre-tax"), !m.income)}
@@ -899,7 +986,7 @@ async function runSingle(){
         ${beaHtml}
       </div>
       <div class="chart-wrap">
-        <h3>Profile shape (scaled 0&ndash;1 against fixed reference ceilings &mdash; a shape, not a judgment)</h3>
+        <h3>Profile shape (scaled 0 to 1 against fixed reference ceilings; a shape, not a judgment)</h3>
         <div id="radar-single"></div>
       </div>
       ${hedonicPanel}`;
@@ -917,7 +1004,7 @@ async function runSingle(){
     drawRadar("radar-single",axes,[{name:acs.NAME,color:"#2B4C5E",values:vals}]);
     report.style.display="block"; setStatus("");
   } catch(e){
-    setStatus("Couldn't complete the pull: "+e.message+". Census's API occasionally rate-limits unregistered requests — try again shortly.", true);
+    setStatus("Couldn't complete the pull: "+e.message+". Census's API occasionally rate-limits unregistered requests. Try again shortly.", true);
   }
 }
 
@@ -984,13 +1071,13 @@ async function runCompare(){
       if(hedForPanel){
         const c = hedForPanel.coef;
         hedonicPanel = `<div class="chart-wrap" style="text-align:left;">
-          <h3 style="text-align:center;">What the national data says drives home prices (hedonic regression, n=${hedForPanel.n.toLocaleString()} counties)</h3>
+          <h3 style="text-align:center;">What drives home prices, nationally (based on ${hedForPanel.n.toLocaleString()} counties)</h3>
           <p style="font-size:0.85rem;color:var(--ink-soft);line-height:1.6;margin:0;">
-            Holding the other constant: each additional $1,000 in median household income is associated with
-            <strong>${c[1]>=0?'+':''}$${Math.round(c[1]*1000).toLocaleString()}</strong> in median home value.
-            Each 1-point increase in the natural amenity score is associated with
-            <strong>${c[2]>=0?'+':''}$${Math.round(c[2]).toLocaleString()}</strong>.
-            Correlational, not causal &mdash; a rough national average, not a formula for either place specifically.
+            Across every county in this dataset, $1,000 more in income tends to come with
+            <strong>${c[1]>=0?'+':''}$${Math.round(c[1]*1000).toLocaleString()}</strong> more in home value.
+            One extra point on the natural amenity score tends to come with
+            <strong>${c[2]>=0?'+':''}$${Math.round(c[2]).toLocaleString()}</strong> more.
+            A pattern, not a cause, and a rough national average rather than a rule for either place specifically.
           </p>
         </div>`;
       }
@@ -1006,7 +1093,7 @@ async function runCompare(){
 
     report.innerHTML = `
       <div class="place-title">${acs1.NAME} <span style="color:#2B4C5E">&#9679;</span> vs ${acs2.NAME} <span style="color:#7A5B3D">&#9679;</span>
-        <small>Live pull &middot; ${geo==="county"?"County":"City/town"} &middot; ACS 5-year vintage 2018&ndash;2022</small></div>
+        <small>Live pull &middot; ${geo==="county"?"County":"City/town"} &middot; ACS 5-year vintage ${ACS_VINTAGE-4}&ndash;${ACS_VINTAGE}</small></div>
       <div class="compare-notice ${notice?'show':''}">${notice||""}</div>
       <div class="stat-grid">
         ${row("Population", m1.pop, m2.pop, "cf-pop", NOTES.pop)}
@@ -1022,7 +1109,7 @@ async function runCompare(){
         ${beaRow}
       </div>
       <div class="chart-wrap">
-        <h3>Relative shape &mdash; each axis scaled to the higher of the two (not a ranking)</h3>
+        <h3>Relative shape (each axis scaled to the higher of the two; not a ranking)</h3>
         <div id="radar-compare"></div>
         <div class="legend">
           <span><span class="swatch" style="background:#2B4C5E"></span>${acs1.NAME}</span>
@@ -1044,7 +1131,7 @@ async function runCompare(){
     ]);
     report.style.display="block"; setStatus("");
   } catch(e){
-    setStatus("Couldn't complete the pull: "+e.message+". Census's API occasionally rate-limits unregistered requests — try again shortly.", true);
+    setStatus("Couldn't complete the pull: "+e.message+". Census's API occasionally rate-limits unregistered requests. Try again shortly.", true);
   }
 }
 
@@ -1052,4 +1139,3 @@ document.getElementById("go-btn").addEventListener("click", ()=>{ mode==="single
 </script>
 </body>
 </html>
-
