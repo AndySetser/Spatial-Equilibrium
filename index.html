@@ -963,7 +963,7 @@ async function runSingle(){
             <strong>${c[1]>=0?'+':''}$${Math.round(c[1]*1000).toLocaleString()}</strong> more in home value.
             One extra point on the natural amenity score (climate, terrain, water) tends to come with
             <strong>${c[2]>=0?'+':''}$${Math.round(c[2]).toLocaleString()}</strong> more.
-            This shows a pattern, not a cause. A two-variable model skips zoning, schools, crime, and a lot else that actually moves home prices, so treat this as a rough national average, not a rule for any single place.
+            This shows a trend found through the model but should not be taken as exactly a cause. A two-variable model still skips zoning, schools, crime, and a lot else that actually moves home prices, so treat this as a rough national average, not a rule for any single place.
           </p>
         </div>`;
       }
@@ -1076,7 +1076,7 @@ async function runCompare(){
             <strong>${c[1]>=0?'+':''}$${Math.round(c[1]*1000).toLocaleString()}</strong> more in home value.
             One extra point on the natural amenity score tends to come with
             <strong>${c[2]>=0?'+':''}$${Math.round(c[2]).toLocaleString()}</strong> more.
-            A pattern, not a cause, and a rough national average rather than a rule for either place specifically.
+            Showing a pattern and a rough national average rather than a rule for either place specifically.
           </p>
         </div>`;
       }
